@@ -1,7 +1,8 @@
 :root {
   --sizeUnit: 1.5vw;
   --quoteTextColor: #000000;
-  --accentColor: #e2e43a;
+  /* --accentColor: #e2e43a; */
+  /* --accentColor: orange; */
   --preHoverColor: #c9c9c9;
 }
 

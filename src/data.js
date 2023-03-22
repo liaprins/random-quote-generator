@@ -82,5 +82,13 @@ export const quoteList = [
   {
     content: "Great things are made by a series of small things brought together.",
     author: "Vincent van Gogh"
+  },
+  {
+    content: "Oo-de-lolly, oo-de-lolly, golly what a day.",
+    author: "The Rooster from 'Robin Hood'"
+  },
+  {
+    content: "Oo-de-lolly, oo-de-lolly, golly what a day. Oo-de-lolly, oo-de-lolly, golly what a day.",
+    author: "The Rooster from 'Robin Hood'"
   }
 ];

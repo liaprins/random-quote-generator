@@ -2,13 +2,23 @@ import * as React from "react";
 import { Fragment } from "react";
 import { useState } from 'react';
 import { randomQuote } from "./randomizer.js";
+import { colorizer } from "./colorizer.js";
 
-function Quote({content, author}) {
+
+
+function Quote({content, author, b}) {
+  const style = {
+    backgroundColor: `lab(85% 0 ${b})`
+  }
   return(
     <Fragment>
-      <div id="quote">
-        <p id="text">{content}</p>
-        <p id="author">{"—" + author}</p>
+      <div 
+        id="quote"
+        style={style}
+      >
+        <p 
+          id="text">{content}</p>
+        <p id="author">{"—" + author + " // " + content.length}</p>
       </div>
       <span id="tweet-container">
         <img 
@@ -37,11 +47,13 @@ function New({handleClick}) {
 
 export default function Wrapper() {
   const [quoteData, setQuoteData] = useState(randomQuote());
+
   return (
     <div id="quote-box">
       <Quote 
         content={quoteData.content}
         author={quoteData.author}
+        b={colorizer(quoteData.content.length)}
       />
       <New handleClick={() => setQuoteData(randomQuote)} />
     </div>
