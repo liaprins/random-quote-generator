@@ -1,9 +1,6 @@
 :root {
   --sizeUnit: 1.5vw;
   --quoteTextColor: #000000;
-  /* --accentColor: #e2e43a; */
-  /* --accentColor: orange; */
-  --preHoverColor: #c9c9c9;
 }
 
 * {
@@ -12,7 +9,7 @@
 
 body {
   font-family: "Work Sans";
-  padding: 0;
+  color: var(--quoteTextColor);
 }
 
 #quote-box {
@@ -22,7 +19,6 @@ body {
 
 #quote {
   padding: calc(var(--sizeUnit) * 3);
-  background-color: var(--accentColor);
   margin-bottom: 1.5vw;
 }
 
@@ -35,7 +31,7 @@ body {
 #author {
   font-size: calc(var(--sizeUnit) * 2);
   font-weight: 300;
-  margin: 3vw 0 0 0;
+  margin-bottom: 0;
 }
 
 #tweet-container:hover > #twitter-logo {
@@ -48,7 +44,6 @@ body {
 
 #twitter-logo {
   width: calc(var(--sizeUnit) * 1.25);
-  display: inline-block;
   position: relative;
   top: calc(var(--sizeUnit) * 0.1);
   padding-right: calc(var(--sizeUnit) * 0.2);
@@ -57,34 +52,59 @@ body {
 
 #tweet-quote {
   text-decoration: none;
-  color: var(--quoteTextColor);
   font-size: var(--sizeUnit);
+  color: var(--quoteTextColor);
   border-bottom: 
     solid 
-    var(--preHoverColor) 
+    #c9c9c9
     calc(var(--sizeUnit) * 0.1);
 }
 
 i {
-  display: inline-block;
   padding-left: calc(var(--sizeUnit) * 0.1);
 }
 
 #new-quote {
   border: none;
   background-color: var(--quoteTextColor);
-  color: var(--accentColor);
   font-family: "Work Sans";
   font-weight: 600;
   font-size: var(--sizeUnit);
   padding: var(--sizeUnit);
   position: relative;
-  top: -9vw;
+  top: calc(var(--sizeUnit) * -6);
   left: var(--sizeUnit);
   float: right;
 }
 
 #new-quote:hover {
   cursor: pointer;
-  color: #ffffff;
+  color: #ffffff !important; /* since (non-hover) font-color is assigned via JS, need to override it here for the hover state with `!important` */
+}
+
+#legend {
+  display: flex;
+  width: calc(var(--sizeUnit) * 50);
+  gap: var(--sizeUnit);
+}
+
+.legend-label {
+  font-weight: 600;
+  font-size: calc(var(--sizeUnit) * 0.65);
+  line-height: 0.7;
+  flex-grow: 1;
+}
+.legend-label:first-of-type {
+  text-align: right;
+}
+
+#legend-colors {
+  flex-grow: 30;
+  height: calc(var(--sizeUnit) * 0.5);
+  background: linear-gradient(
+    90deg, 
+    lab(85% 0 125),
+    lab(85% -125 0) 50%,
+    lab(85% 0 -125)
+  );
 }
