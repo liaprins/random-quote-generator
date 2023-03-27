@@ -1,28 +1,23 @@
-import { quoteList } from "./data.js";
-
 export function colorizer(charCount) {
 
-  // determine length of shortest and longest quotes in set
-  let mostChars = 0;
-  quoteList.map((quote) => {
-    if (quote.content.length > mostChars) {
-      mostChars = quote.content.length;
-    }
-  })
-  let leastChars = mostChars;
-  quoteList.map((quote) => {
-    if (quote.content.length < leastChars) {
-      leastChars = quote.content.length;
-    }
-  })
-  
-  // use quote-length to assign LAB-based color
-  const charRange = mostChars - leastChars;
-  const labRange = 250;
-  const charCountScaled = charCount - leastChars;
-  const b = ((((charCountScaled * labRange) / charRange) - (labRange / 2)) * -1);
-  const a = b - (labRange / 2);
-  console.log(`b: ${b} // a: ${a}`);
+  // manually set max and min quote length between which to map background colors
+  const maxChars = 250;
+  const minChars = 25;
+  const charRange = maxChars - minChars;
+  const charCountScaled = charCount - minChars;
+  const positiveLabRange = 125;
+
+  // set a and b within lab() colorspace
+  let a = 0; 
+  let b;
+  if (charCount > maxChars) { // if beyond max char length accounted for in color spectrum...
+    b = -positiveLabRange; // ...set b to max color accounted for within spectrum (-125; blue)
+  } else if (charCount < minChars) { // if below min char length accounted for in color spectrum...
+    b = positiveLabRange; // ...set b to min color accounted for within spectrum (125; yellow)
+  } else { // if within char length range...
+    b = ((((charCountScaled * (positiveLabRange * 2)) / charRange) - positiveLabRange) * -1);
+    a = b - positiveLabRange;
+  }
 
   return {
     b: b,

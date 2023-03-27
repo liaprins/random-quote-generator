@@ -1,85 +1,70 @@
-import * as React from "react";
-import { Fragment } from "react";
-import { useState } from 'react';
-import { randomQuote } from "./randomizer.js";
+import React, { useState, useEffect } from 'react';
+import { Quote } from "./Quote.js";
 import { colorizer } from "./colorizer.js";
 
-function Quote({content, author, color}) {
-  return(
-    <Fragment>
-      <div 
-        id="quote"
-        style={{backgroundColor: color}}
-      >
-        <p id="text">{content}</p>
-        <p id="author">{"—" + author}</p>
-      </div>
-      <span id="tweet-container">
-        <img 
-          id="twitter-logo"
-          src="images/twitter.svg" 
-          alt="Twitter logo" 
-        />
-        <a 
-          id="tweet-quote" 
-          href={"https://twitter.com/intent/tweet?text=“" + content + "” —"+author + ",&via=iggldee"} 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          OnClick="window.open(this.href)" 
-          title="Share on Twitter"
-        >
-          Tweet it<i>!</i>
-        </a>
-      </span>
-    </Fragment>
-  );
-}
-
-function New({handleClick, color}) {
-  return (
-    <button 
-      id="new-quote" 
-      onClick={handleClick}
-      style={{
-        color: color,
-      }}
-    >
-      New quote
-    </button>
-  );
-}
-
-function Legend() {
-  return (
-    <div id="legend">
-      <span className="legend-label">Shortest quote</span>
-      <div id="legend-colors"></div>
-      <span className="legend-label">Longest quote</span>
-    </div>
-  ); 
-}
-
 export default function Wrapper() {
-  const [quoteData, setQuoteData] = useState(randomQuote());
-  const randomFrozen = randomQuote(); // Math.random() (within randomQuote() function) returns a distinct random value for each instance it is called, so instead need to set a var to its output, in order to keep quote content, author, and length cohesively assigned to a single output quote
-  const color = `lab(
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  const [customError, setCustomError] = useState(null); // allow for custom-set, more explanatory error messages
+  const [loading, setLoading] = useState(true);
+  const [newQuote, setNewQuote] = useState(true); // establish this var so it can be called later and updated, in turn triggering useEffect's fetch() method to run again upon button click
+  const fetchOptions = {
+    method: 'GET',
+    headers: {
+      'X-Api-Key': 'nawZ9nbRidxzlaAgYEMcTw==NnR9bZb4NN8o4SfI'
+    }
+  };
+
+  // pass quote's length to colorizer() to determine color to associate it to in UI; used by both Quote and New components
+  let color;
+  data && (color = `lab(
     85% 
-    ${colorizer(randomFrozen.content.length).a} 
-    ${colorizer(randomFrozen.content.length).b}
-    )`; // determine quote's color within LAB colorspace based on its length
+    ${colorizer(data.quote.length).a} 
+    ${colorizer(data.quote.length).b}
+    )`);
+
+  useEffect(() => {
+    setData(null);
+    setError(null);
+    setLoading(true);
+    const getData = async() => {
+      try {
+        const response = await fetch(
+          'https://api.api-ninjas.com/v1/quotes?category=dreams', fetchOptions
+        );
+        if (!response.ok) {
+          (response.status === 429) && 
+            (setCustomError("This means the rate of clicks has exceeded what is allowed by the API; try waiting longer before requesting a new quote."));
+          (response.status === 404) &&
+            (setCustomError("This means the API's URL could not be found; if you are the creator of this app, check the URL you are requesting."));
+
+          throw new Error(
+            `An HTTP error has occurred with status ${response.status}`
+          );
+        }
+        let actualData = await response.json();
+        setData(actualData[0]);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+        setData(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    getData()
+  }, [newQuote]); // set newQuote state var as a dependency for useEffect, so that useEffect will be re-triggered anytime newQuote changes
 
   return (
     <div id="quote-box">
       <Quote 
-        content={randomFrozen.content}
-        author={randomFrozen.author}
         color={color}
+        loading={loading}
+        error={error}
+        customError={customError}
+        data={data}
+        handleClick={() => setNewQuote(!newQuote)} // change value of newQuote so that useEffect will be triggered to return a new quote
       />
-      <New 
-        handleClick={() => setQuoteData(randomQuote)} 
-        color={color}
-      />
-      <Legend />
     </div>
   );
 }

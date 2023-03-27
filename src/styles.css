@@ -1,6 +1,7 @@
 :root {
   --sizeUnit: 1.5vw;
   --quoteTextColor: #000000;
+  --buttonDefaultColor: #ffffff;
 }
 
 * {
@@ -12,20 +13,39 @@ body {
   color: var(--quoteTextColor);
 }
 
+#loading-box {
+  margin-top: 20vh;
+}
+
+.icon{
+  height: calc(var(--sizeUnit) * 3);
+  display: block;
+  margin: 0 auto var(--sizeUnit) auto;
+}
+
+.primary-text {
+  font-size: calc(var(--sizeUnit) * 3);
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+}
+
+#text {
+  text-align: left;
+}
+
 #quote-box {
   width: calc(var(--sizeUnit) * 50);
   margin: 10vh auto;
 }
 
+.custom-message {
+  font-size: var(--sizeUnit);
+}
+
 #quote {
   padding: calc(var(--sizeUnit) * 3);
   margin-bottom: 1.5vw;
-}
-
-#text {
-  font-size: calc(var(--sizeUnit) * 3);
-  font-weight: 600;
-  margin: 0;
 }
 
 #author {
@@ -71,15 +91,19 @@ i {
   font-weight: 600;
   font-size: var(--sizeUnit);
   padding: var(--sizeUnit);
-  position: relative;
-  top: calc(var(--sizeUnit) * -6);
-  left: var(--sizeUnit);
+  color: var(--buttonDefaultColor);
   float: right;
 }
 
 #new-quote:hover {
   cursor: pointer;
-  color: #ffffff !important; /* since (non-hover) font-color is assigned via JS, need to override it here for the hover state with `!important` */
+  color: var(--buttonDefaultColor) !important; /* since (non-hover) font-color is assigned via JS, need to override it here for the hover state with `!important` */
+}
+
+.new-quote-data-state {
+  position: relative;
+  top: calc(var(--sizeUnit) * -6);
+  left: var(--sizeUnit);
 }
 
 #legend {
@@ -99,7 +123,7 @@ i {
 }
 
 #legend-colors {
-  flex-grow: 30;
+  flex-grow: 20;
   height: calc(var(--sizeUnit) * 0.5);
   background: linear-gradient(
     90deg, 
