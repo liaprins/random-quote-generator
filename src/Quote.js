@@ -5,7 +5,6 @@ export function Quote({
   color, 
   loading, 
   error,
-  customError, 
   data,
   handleClick
 }) {
@@ -30,9 +29,19 @@ export function Quote({
               src="images/error.png" 
               alt="Triangle with '!' inside to indicate error" 
             />
-          <p className="primary-text">{error}</p>
-          <p className="custom-message">{customError}</p>
-          
+          <p className="primary-text">{`An HTTP error has occurred with status ${error}`}</p>
+
+          {error === 429 &&
+            <p className="custom-message">
+              This means the rate of clicks has exceeded what is allowed by the API; try waiting longer before requesting a new quote.
+            </p>
+          }
+          {error === 404 &&
+            <p className="custom-message">
+              This means the API's URL could not be found; if you are the creator of this app, check the URL you are requesting.
+            </p>
+          }
+
           <New 
             handleClick={handleClick}
           />

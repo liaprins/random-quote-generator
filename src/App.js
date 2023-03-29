@@ -5,7 +5,6 @@ import { colorizer } from "./colorizer.js";
 export default function Wrapper() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
-  const [customError, setCustomError] = useState(null); // allow for custom-set, more explanatory error messages
   const [loading, setLoading] = useState(true);
   const [newQuote, setNewQuote] = useState(true); // establish this var so it can be called later and updated, in turn triggering useEffect's fetch() method to run again upon button click
   const fetchOptions = {
@@ -33,14 +32,7 @@ export default function Wrapper() {
           'https://api.api-ninjas.com/v1/quotes?category=dreams', fetchOptions
         );
         if (!response.ok) {
-          (response.status === 429) && 
-            (setCustomError("This means the rate of clicks has exceeded what is allowed by the API; try waiting longer before requesting a new quote."));
-          (response.status === 404) &&
-            (setCustomError("This means the API's URL could not be found; if you are the creator of this app, check the URL you are requesting."));
-
-          throw new Error(
-            `An HTTP error has occurred with status ${response.status}`
-          );
+          throw new Error(response.status);
         }
         let actualData = await response.json();
         setData(actualData[0]);
@@ -61,7 +53,6 @@ export default function Wrapper() {
         color={color}
         loading={loading}
         error={error}
-        customError={customError}
         data={data}
         handleClick={() => setNewQuote(!newQuote)} // change value of newQuote so that useEffect will be triggered to return a new quote
       />
