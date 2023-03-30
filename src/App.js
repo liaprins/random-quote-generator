@@ -1,49 +1,61 @@
-import * as React from "react";
-import { Fragment } from "react";
-import { useState } from 'react';
-import { randomQuote } from "./randomizer.js";
-
-function Quote({content, author}) {
-  return(
-    <Fragment>
-      <div id="quote">
-        <p id="text">{content}</p>
-        <p id="author">{"—" + author}</p>
-      </div>
-      <span id="tweet-container">
-        <img 
-          id="twitter-logo"
-          src="images/twitter.svg" 
-          alt="Twitter logo" 
-        />
-        <a 
-          id="tweet-quote" 
-          href={"https://twitter.com/intent/tweet?text=“" + content + "” —"+author + ",&via=iggldee"} 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          OnClick="window.open(this.href)" 
-          title="Share on Twitter"
-        >
-          Tweet it<i>!</i>
-        </a>
-      </span>
-    </Fragment>
-  );
-}
-
-function New({handleClick}) {
-  return <button id="new-quote" onClick={handleClick}>New quote</button>;
-}
+import React, { useState, useEffect } from 'react';
+import { Quote } from "./Quote.js";
+import { colorizer } from "./colorizer.js";
 
 export default function Wrapper() {
-  const [quoteData, setQuoteData] = useState(randomQuote());
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [newQuote, setNewQuote] = useState(true); // establish this var so it can be called later and updated, in turn triggering useEffect's fetch() method to run again upon button click
+  const fetchOptions = {
+    method: 'GET',
+    headers: {
+      'X-Api-Key': 'nawZ9nbRidxzlaAgYEMcTw==NnR9bZb4NN8o4SfI'
+    }
+  };
+
+  // pass quote's length to colorizer() to determine color to associate it to in UI; used by both Quote and New components
+  let color;
+  data && (color = `lab(
+    85% 
+    ${colorizer(data.quote.length).a} 
+    ${colorizer(data.quote.length).b}
+    )`);
+
+  useEffect(() => {
+    setData(null);
+    setError(null);
+    setLoading(true);
+    const getData = async() => {
+      try {
+        const response = await fetch(
+          'https://api.api-ninjas.com/v1/quotes?category=dreams', fetchOptions
+        );
+        if (!response.ok) {
+          throw new Error(response.status);
+        }
+        let actualData = await response.json();
+        setData(actualData[0]);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+        setData(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    getData()
+  }, [newQuote]); // set newQuote state var as a dependency for useEffect, so that useEffect will be re-triggered anytime newQuote changes
+
   return (
     <div id="quote-box">
       <Quote 
-        content={quoteData.content}
-        author={quoteData.author}
+        color={color}
+        loading={loading}
+        error={error}
+        data={data}
+        handleClick={() => setNewQuote(!newQuote)} // change value of newQuote so that useEffect will be triggered to return a new quote
       />
-      <New handleClick={() => setQuoteData(randomQuote)} />
     </div>
   );
 }
